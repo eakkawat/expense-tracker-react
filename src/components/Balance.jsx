@@ -6,7 +6,7 @@ export default function Balance() {
   return (
     <>
       <h4>Your balance</h4>
-      <h1>${balance}</h1>
+      <h1>${balance.toFixed(2)}</h1>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { useReducer, createContext, useContext } from 'react';
+import reducer from './Reducer';
 
 const initialState = {
   transactions: [
@@ -12,15 +13,24 @@ const initialState = {
 const GlobalContext = createContext(initialState);
 export const useGlobal = () => useContext(GlobalContext);
 
-function reducer(state, action) {
-  switch (action.type) {
-    default:
-      return state;
-  }
-}
-
 export function GlobalProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  function deleteTransaction(id) {
+    dispatch({
+      type: 'DELETE_TRANSACTION',
+      payload: id,
+    });
+  }
+
+  function addTransaction(text, amount) {
+    const count = state.transactions.length;
+
+    dispatch({
+      type: 'ADD_TRANSACTION',
+      payload: { id: count + 1, text, amount },
+    });
+  }
 
   const calculateBalance = () => {
     return state.transactions.reduce(
@@ -29,11 +39,31 @@ export function GlobalProvider({ children }) {
     );
   };
 
+  const calculateTotalIncome = () => {
+    const incomes = state.transactions
+      .map((transaction) => transaction.amount)
+      .filter((amount) => amount > 0);
+
+    return incomes.reduce((total, item) => total + item, 0);
+  };
+
+  const calculateTotalExpense = () => {
+    const expenses = state.transactions
+      .map((transaction) => transaction.amount)
+      .filter((amount) => amount < 0);
+
+    return expenses.reduce((total, item) => total + item, 0);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
         transactions: state.transactions,
         balance: calculateBalance(),
+        income: calculateTotalIncome(),
+        expense: calculateTotalExpense(),
+        deleteTransaction,
+        addTransaction,
       }}>
       {children}
     </GlobalContext.Provider>

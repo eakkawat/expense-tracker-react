@@ -1,4 +1,8 @@
-export default function Transaction({ text, amount }) {
+import { useGlobal } from '../context/GlobalState';
+
+export default function Transaction({ id, text, amount }) {
+  const { deleteTransaction } = useGlobal();
+
   const sign =
     amount > 0
       ? { operation: '+', class: 'plus' }
@@ -10,7 +14,9 @@ export default function Transaction({ text, amount }) {
       <span>
         {sign.operation}${Math.abs(amount)}
       </span>{' '}
-      <button className='delete-btn'>X</button>
+      <button className='delete-btn' onClick={() => deleteTransaction(id)}>
+        X
+      </button>
     </li>
   );
 }

@@ -1,12 +1,18 @@
 import { useState } from 'react';
+import { useGlobal } from '../context/GlobalState';
 
 export default function AddTransaction() {
   const [text, setText] = useState('');
   const [amount, setAmount] = useState(0);
+  const { addTransaction } = useGlobal();
 
   function submitForm(event) {
     event.preventDefault();
-    console.log(text, amount);
+    addTransaction(text, amount);
+
+    // Reset input box for text and amount
+    setText('');
+    setAmount(0);
   }
 
   return (
